@@ -70,8 +70,8 @@ ARG FILTLONG_VER
 RUN echo "Running Test layer"
 ENV PATH="$PATH:/data"
 
-# download a pair of long-read sequences from European Nucleotide Archive (ENA) and run them through Filtlong
-# SRR19008456_1.fastq and SRR19008456_2.fastq
+RUN echo "download a pair of long-read sequences from European Nucleotide Archive (ENA)" && \
+ echo "    SRR19008456_1.fastq and SRR19008456_2.fastq"
 RUN wget --no-verbose "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR190/056/SRR19008456/SRR19008456_1.fastq.gz"
 RUN wget --no-verbose "ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR190/056/SRR19008456/SRR19008456_2.fastq.gz"
 
@@ -82,18 +82,20 @@ RUN echo "Done with histograms"
 
 RUN echo "Show help file for installed unittest"
 RUN cd /opt/Filtlong-${FILTLONG_VER} && \
- python3 -m unittest -h
+ python3 -m unittest -h && echo
 
 RUN echo "Run unittest without args: "&& \
- python3 -m unittest
-RUN echo "Done with unittest"
+ python3 -m unittest && \
+ echo "Done with unittest"
 
 RUN echo && echo "View Filtlong help file:  " && \
-filtlong -h
+filtlong -h && echo
 
-RUN echo && \
- echo "Run Filtlong with length and quality options on a pair of long read sequences in /data dir: " && \
+RUN echo "Run Filtlong with length and quality options on a pair of long read sequences in /data dir: " && \
  filtlong --min_length 250 --min_mean_q 40 SRR19008456_1.fastq.gz|gzip  > SRR19008456_1_filt.fastq.gz && \
  filtlong --min_length 250 --min_mean_q 40 SRR19008456_2.fastq.gz|gzip  > SRR19008456_2_filt.fastq.gz
 
- echo && echo "Successful installation of Filtlong-${FILTLONG_VER}"
+RUN echo "Files successfully filtered: " && \
+ ls -lh SRR19008456_1.fastq.gz && echo " ---> " && ls -lh SRR19008456_1_filt.fastq.gz && \
+ ls -lh SRR19008456_2.fastq.gz && echo " ---> " && ls -lh SRR19008456_2_filt.fastq.gz
+RUN echo && echo "Successful installation of Filtlong-${FILTLONG_VER}"
